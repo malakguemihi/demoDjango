@@ -19,5 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('student/', include('students.urls')), # include your app urls
+    path('student/', include('students.urls')),  # urls لتطبيق الطلاب
+    path('', include('django_prometheus.urls')),  # endpoint /metrics
 ]
