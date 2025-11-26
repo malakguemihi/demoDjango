@@ -1,21 +1,20 @@
 name: Django CI and Deploy to Render
 
-# Trigger workflow عند أي push أو pull request على الفرع master
 on:
   push:
-    branches: [ master ]
+    branches: [ master ]    # عند كل push إلى master
   pull_request:
-    branches: [ master ]
+    branches: [ master ]    # عند pull request على master
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest   # نظام التشغيل الافتراضي
 
     steps:
-      # Step 1: Checkout repository
+      # Step 1: Checkout the repository
       - uses: actions/checkout@v3
 
-      # Step 2: Set up Python 3.11 (أو أي إصدار مناسب)
+      # Step 2: Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -27,22 +26,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Step 4: Run Django migrations (اختياري قبل build)
-      - name: Run migrations
+      # Step 4: Run Django tests
+      - name: Run tests
         run: |
-          python manage.py migrate
+          python manage.py test
 
-      # Step 5: Collect static files (إذا تستخدم static)
-      - name: Collect static files
-        run: |
-          python manage.py collectstatic --noinput
-
-      # Step 6: Build Docker image
+      # Step 5: Build Docker image
       - name: Build Docker image
         run: docker build -t my-django-app .
 
-      # Step 7: Deploy to Render
-      - name: Deploy to production
+      # Step 6: Deploy to Render
+      - name: Deploy to Render
         uses: johnbeynon/render-deploy-action@v0.0.8
         with:
           service-id: ${{ secrets.SERVICE_ID }}
